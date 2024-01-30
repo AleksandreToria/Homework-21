@@ -43,8 +43,17 @@ class HomeFragmentViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
+                        val items = it.data.map { it.toPresenter() }
+
                         _homeState.update { currentState ->
-                            currentState.copy(items = it.data.map { it.toPresenter() })
+                            currentState.copy(
+                                items = items,
+                                isLoading = false,
+                            )
+                        }
+
+                        if (items.isEmpty()) {
+                            updateErrorMessage(message = "No Items to show")
                         }
                     }
                 }
