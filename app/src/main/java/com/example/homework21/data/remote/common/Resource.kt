@@ -1,4 +1,4 @@
-package com.example.homework21.data.common
+package com.example.homework21.data.remote.common
 
 sealed class Resource<out D : Any> {
     data class Success<out D : Any>(val data: D) : Resource<D>()

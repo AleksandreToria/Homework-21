@@ -1,6 +1,6 @@
 package com.example.homework21.data.remote.mapper.base
 
-import com.example.homework21.data.common.Resource
+import com.example.homework21.data.remote.common.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

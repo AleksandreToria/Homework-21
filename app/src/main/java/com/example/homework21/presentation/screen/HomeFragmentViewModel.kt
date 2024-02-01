@@ -2,7 +2,7 @@ package com.example.homework21.presentation.screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.homework21.data.common.Resource
+import com.example.homework21.data.remote.common.Resource
 import com.example.homework21.domain.usecase.GetItemsUseCase
 import com.example.homework21.presentation.event.HomeEvent
 import com.example.homework21.presentation.mapper.toPresenter

@@ -1,7 +1,7 @@
 package com.example.homework21.di
 
 import android.content.Context
-import com.example.homework21.data.common.HandleResponse
+import com.example.homework21.data.remote.common.HandleResponse
 import com.example.homework21.data.remote.service.ItemService
 import com.example.homework21.data.util.NetworkStatus
 import com.squareup.moshi.Moshi
