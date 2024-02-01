@@ -31,6 +31,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     override fun bindViewActionListeners() {
+        binding.retryBtn.setOnClickListener {
+            if (!binding.retryBtn.isEnabled) return@setOnClickListener
+
+            viewModel.onEvent(HomeEvent.FetchConnections)
+        }
     }
 
     override fun bindObserves() {
@@ -43,16 +48,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
     }
 
-    private fun handleHomeState(state: HomeState) {
-        binding.progress.visibility =
+    private fun handleHomeState(state: HomeState) = binding.apply {
+        progress.visibility =
             if (state.isLoading) View.VISIBLE else View.GONE
+
+        retryBtn.visibility = if (state.showRetry) View.VISIBLE else View.GONE
 
         state.items?.let {
             adapter.submitList(it)
         }
 
         state.errorMessage?.let {
-            binding.root.showSnackBar(message = it)
+            root.showSnackBar(message = it)
             viewModel.onEvent(HomeEvent.ResetErrorMessage)
         }
     }

@@ -34,11 +34,18 @@ class HomeFragmentViewModel @Inject constructor(
         viewModelScope.launch {
             getItemsUseCase().collect { it ->
                 when (it) {
-                    is Resource.Error -> updateErrorMessage(message = it.errorMessage)
+                    is Resource.Error -> {
+                        _homeState.update { currentState ->
+                            currentState.copy(
+                                isLoading = false,
+                                errorMessage = it.errorMessage
+                            )
+                        }
+                    }
 
                     is Resource.Loading -> {
                         _homeState.update { currentState ->
-                            currentState.copy(isLoading = it.loading)
+                            currentState.copy(isLoading = it.loading, showRetry = false)
                         }
                     }
 
@@ -48,12 +55,14 @@ class HomeFragmentViewModel @Inject constructor(
                         _homeState.update { currentState ->
                             currentState.copy(
                                 items = items,
-                                isLoading = false,
+                                isLoading = false
                             )
                         }
 
                         if (items.isEmpty()) {
                             updateErrorMessage(message = "No Items to show")
+                        } else {
+                            updateErrorMessage(message = null)
                         }
                     }
                 }
