@@ -9,7 +9,8 @@ fun GetItems.toData(): ItemEntity {
         price = price,
         cover = cover,
         title = title,
-        favorite = favorite
+        favorite = favorite,
+        category = category
     )
 }
 
@@ -19,6 +20,7 @@ fun ItemEntity.toDomain(): GetItems {
         price = price,
         cover = cover,
         title = title,
-        favorite = favorite
+        favorite = favorite,
+        category = category!!
     )
 }

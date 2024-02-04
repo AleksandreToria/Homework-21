@@ -7,14 +7,15 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "items")
 data class ItemEntity(
     @PrimaryKey
-    @ColumnInfo(name = "id")
     val id: Int,
     @ColumnInfo(name = "cover")
     val cover: String,
+    @ColumnInfo(name = "favorite")
+    val favorite: Boolean,
     @ColumnInfo(name = "price")
     val price: String,
     @ColumnInfo(name = "title")
     val title: String,
-    @ColumnInfo(name = "favorite")
-    val favorite: Boolean
+    @ColumnInfo(name = "category")
+    val category: String? = null
 )

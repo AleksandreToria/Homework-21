@@ -6,6 +6,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homework21.databinding.FragmentHomeBinding
 import com.example.homework21.presentation.base.BaseFragment
 import com.example.homework21.presentation.event.HomeEvent
@@ -18,23 +19,24 @@ import kotlinx.coroutines.launch
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
     private val viewModel: HomeFragmentViewModel by viewModels()
-    private lateinit var adapter: HomeRecyclerAdapter
+    private lateinit var itemAdapter: HomeRecyclerAdapter
+    private lateinit var categoryAdapter: CategoryRecyclerAdapter
 
     override fun bind() {
-        adapter = HomeRecyclerAdapter()
-        binding.apply {
-            recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-            recyclerView.adapter = adapter
-        }
+        itemAdapter = HomeRecyclerAdapter()
+        categoryAdapter = CategoryRecyclerAdapter()
 
-        viewModel.onEvent(HomeEvent.FetchConnections)
+        setupRecyclerView()
+
+        viewModel.onEvent(HomeEvent.FetchItems)
+        viewModel.onEvent(HomeEvent.FetchCategories)
     }
 
     override fun bindViewActionListeners() {
         binding.retryBtn.setOnClickListener {
             if (!binding.retryBtn.isEnabled) return@setOnClickListener
 
-            viewModel.onEvent(HomeEvent.FetchConnections)
+            viewModel.onEvent(HomeEvent.FetchItems)
         }
     }
 
@@ -48,6 +50,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
     }
 
+    private fun setupRecyclerView() {
+        binding.recyclerView.apply {
+            layoutManager = GridLayoutManager(requireContext(), 2)
+            adapter = itemAdapter
+        }
+
+        binding.categoryRecyclerView.apply {
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = categoryAdapter
+        }
+    }
+
     private fun handleHomeState(state: HomeState) = binding.apply {
         progress.visibility =
             if (state.isLoading) View.VISIBLE else View.GONE
@@ -55,7 +70,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         retryBtn.visibility = if (state.showRetry) View.VISIBLE else View.GONE
 
         state.items?.let {
-            adapter.submitList(it)
+            itemAdapter.submitList(it)
+        }
+
+        state.category?.let {
+            categoryAdapter.submitList(it)
         }
 
         state.errorMessage?.let {

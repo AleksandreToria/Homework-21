@@ -25,12 +25,13 @@ class HomeFragmentViewModel @Inject constructor(
 
     fun onEvent(event: HomeEvent) {
         when (event) {
-            HomeEvent.FetchConnections -> fetchConnections()
+            HomeEvent.FetchItems -> fetchItems()
             HomeEvent.ResetErrorMessage -> updateErrorMessage(message = null)
+            HomeEvent.FetchCategories -> fetchProductsByCategory()
         }
     }
 
-    private fun fetchConnections() {
+    private fun fetchItems() {
         viewModelScope.launch {
             getItemsUseCase().collect { it ->
                 when (it) {
@@ -63,6 +64,30 @@ class HomeFragmentViewModel @Inject constructor(
                             updateErrorMessage(message = "No Items to show")
                         } else {
                             updateErrorMessage(message = null)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun fetchProductsByCategory() {
+        viewModelScope.launch {
+            getItemsUseCase().collect { it ->
+                when (it) {
+                    is Resource.Error -> updateErrorMessage(it.errorMessage)
+                    is Resource.Loading -> _homeState.update {
+                        it.copy(isLoading = it.isLoading)
+                    }
+
+                    is Resource.Success -> {
+                        val categories = it.data.map { it.category }.distinct()
+
+                        _homeState.update { currentState ->
+                            currentState.copy(
+                                isLoading = false,
+                                category = categories
+                            )
                         }
                     }
                 }

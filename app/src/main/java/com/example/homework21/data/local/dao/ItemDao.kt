@@ -9,9 +9,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ItemDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertItem(item: ItemEntity)
 
     @Query("SELECT * FROM items")
     fun getAllItems(): Flow<List<ItemEntity>>
+
+    @Query("SELECT * FROM items WHERE category =:category")
+    fun getItemByCategory(category: String): Flow<List<ItemEntity>>
 }

@@ -5,7 +5,6 @@ import com.example.homework21.data.local.mapper.toData
 import com.example.homework21.data.local.mapper.toDomain
 import com.example.homework21.domain.local.LocalRepository
 import com.example.homework21.domain.model.GetItems
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -24,6 +23,12 @@ class LocalDataSource @Inject constructor(
     override suspend fun saveItems(items: List<GetItems>) = withContext(Dispatchers.IO) {
         items.forEach {
             itemDao.insertItem(it.toData())
+        }
+    }
+
+    override suspend fun getItemsByCategory(category: String) = withContext(Dispatchers.IO) {
+        itemDao.getItemByCategory(category).map { entities ->
+            entities.map { it.toDomain() }
         }
     }
 }
