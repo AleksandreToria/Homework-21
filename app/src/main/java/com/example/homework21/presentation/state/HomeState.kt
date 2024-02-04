@@ -7,5 +7,6 @@ data class HomeState(
     val items: List<Items>? = emptyList(),
     val errorMessage: String? = null,
     val showRetry: Boolean = false,
-    val category: List<String>? = emptyList()
+    val category: List<String>? = emptyList(),
+    val categoryItems: List<Items>? = emptyList()
 )

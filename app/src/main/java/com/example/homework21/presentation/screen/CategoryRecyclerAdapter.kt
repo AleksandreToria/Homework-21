@@ -7,17 +7,21 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homework21.databinding.CategoryLayoutBinding
 
-class CategoryRecyclerAdapter :
+class CategoryRecyclerAdapter(private val includeAllCategory: Boolean = true) :
     ListAdapter<String, CategoryRecyclerAdapter.CategoriesViewHolder>(CategoryDiffUtil()) {
+
+    private var onItemClick: ((String) -> Unit)? = null
+
+    fun setOnItemClickListener(listener: (String) -> Unit) {
+        this.onItemClick = listener
+    }
+
+    companion object {
+        const val ALL_CATEGORY = "All"
+    }
 
     inner class CategoriesViewHolder(private val binding: CategoryLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
-        private var onItemClick: ((String) -> Unit)? = null
-
-        fun setOnItemClickListener(listener: (String) -> Unit) {
-            this.onItemClick = listener
-        }
 
         fun bind(text: String) {
             with(binding) {
@@ -39,8 +43,12 @@ class CategoryRecyclerAdapter :
     )
 
     override fun onBindViewHolder(holder: CategoriesViewHolder, position: Int) {
-        val category = getItem(position)
+        val category = if (includeAllCategory && position == 0) ALL_CATEGORY else getItem(if (includeAllCategory) position - 1 else position)
         holder.bind(category)
+    }
+
+    override fun getItemCount(): Int {
+        return super.getItemCount() + if (includeAllCategory) 1 else 0
     }
 
     class CategoryDiffUtil : DiffUtil.ItemCallback<String>() {

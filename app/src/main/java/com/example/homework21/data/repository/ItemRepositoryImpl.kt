@@ -7,6 +7,7 @@ import com.example.homework21.domain.model.GetItems
 import com.example.homework21.domain.remote.repository.RemoteRepository
 import com.example.homework21.domain.repository.ItemRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -39,6 +40,20 @@ class ItemRepositoryImpl @Inject constructor(
                     emit(Resource.Success(items))
                 }
             }
+        }
+    }
+
+    override suspend fun getItemsByCategory(category: String): Flow<Resource<List<GetItems>>> = flow {
+        emit(Resource.Loading(loading = true))
+        try {
+            val items = localRepository.getItemsByCategory(category).first()
+            if (items.isNotEmpty()) {
+                emit(Resource.Success(items))
+            } else {
+                emit(Resource.Error("No items found for category $category"))
+            }
+        } catch (e: Exception) {
+            emit(Resource.Error("Failed to fetch items by category: ${e.message}"))
         }
     }
 }

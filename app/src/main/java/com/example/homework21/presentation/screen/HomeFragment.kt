@@ -33,10 +33,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     override fun bindViewActionListeners() {
-        binding.retryBtn.setOnClickListener {
-            if (!binding.retryBtn.isEnabled) return@setOnClickListener
+        binding.apply {
+            retryBtn.setOnClickListener {
+                if (!binding.retryBtn.isEnabled) return@setOnClickListener
+                viewModel.onEvent(HomeEvent.FetchItems)
+            }
 
-            viewModel.onEvent(HomeEvent.FetchItems)
+            categoryAdapter.setOnItemClickListener { category ->
+                if (category == CategoryRecyclerAdapter.ALL_CATEGORY) {
+                    viewModel.onEvent(HomeEvent.FetchItems)
+                } else {
+                    viewModel.onEvent(HomeEvent.FetchProductsByCategory(category))
+                }
+            }
         }
     }
 
@@ -56,10 +65,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             adapter = itemAdapter
         }
 
-        binding.categoryRecyclerView.apply {
-            layoutManager =
+        binding.apply {
+            categoryRecyclerView.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            adapter = categoryAdapter
+            categoryRecyclerView.adapter = categoryAdapter
         }
     }
 
@@ -69,8 +78,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
         retryBtn.visibility = if (state.showRetry) View.VISIBLE else View.GONE
 
-        state.items?.let {
-            itemAdapter.submitList(it)
+        if (viewModel.isFetchingByCategory()) {
+            state.categoryItems?.let {
+                itemAdapter.submitList(it)
+            }
+        }else {
+            state.items?.let {
+                itemAdapter.submitList(it)
+            }
         }
 
         state.category?.let {
