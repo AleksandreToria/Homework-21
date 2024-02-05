@@ -40,7 +40,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
 
             categoryAdapter.setOnItemClickListener { category ->
-                if (category == CategoryRecyclerAdapter.ALL_CATEGORY) {
+                if (category == "All") {
                     viewModel.onEvent(HomeEvent.FetchItems)
                 } else {
                     viewModel.onEvent(HomeEvent.FetchProductsByCategory(category))

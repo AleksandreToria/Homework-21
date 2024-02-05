@@ -90,11 +90,12 @@ class HomeFragmentViewModel @Inject constructor(
 
                     is Resource.Success -> {
                         val categories = it.data.map { it.category }.distinct()
+                        val updatedCategories = mutableListOf("All").apply { addAll(categories) }
 
                         _homeState.update { currentState ->
                             currentState.copy(
                                 isLoading = false,
-                                category = categories
+                                category = updatedCategories
                             )
                         }
                     }
@@ -102,6 +103,7 @@ class HomeFragmentViewModel @Inject constructor(
             }
         }
     }
+
 
     private fun fetchItemsByCategory(category: String) {
         isFetchingByCategory = true
